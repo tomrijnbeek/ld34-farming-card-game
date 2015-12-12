@@ -53,6 +53,13 @@ public class Hand : Singleton<Hand> {
     }
 
     public void ReplenishHand () {
+        while (cards.Count < 5)
+            InstantiateCard(Deck.Instance.GetRandomPrefab());
+    }
 
+    void InstantiateCard (GameObject prefab) {
+        var obj = Instantiate(prefab);
+        obj.transform.SetParent(transform);
+        cards.Add(obj.GetComponent<Card>());
     }
 }
