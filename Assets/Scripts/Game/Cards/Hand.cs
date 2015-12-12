@@ -9,7 +9,7 @@ public class Hand : Singleton<Hand> {
 
 	// Use this for initialization
 	void Start () {
-	
+        RealignCards ();
 	}
 	
 	// Update is called once per frame

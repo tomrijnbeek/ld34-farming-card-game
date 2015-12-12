@@ -30,7 +30,7 @@ public class Plant : MonoBehaviour {
             return;
         }
 
-        int sprite = Mathf.FloorToInt((sprites.Length * currentProgress) / maxProgress);
+        int sprite = Mathf.FloorToInt((sprites.Length * (currentProgress - 1)) / (maxProgress - 1));
         if (sprite != currentSprite) {
             GetComponent<SpriteRenderer>().sprite = sprites[sprite];
             currentSprite = sprite;
