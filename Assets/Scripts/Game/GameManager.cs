@@ -4,10 +4,13 @@ using System.Collections;
 public class GameManager : Singleton<GameManager> {
 
     public GameObject tilePrefab;
+    public Tile[,] tiles;
+
+    public bool growNow;
 
 	// Use this for initialization
 	void Start () {
-        var tiles = new Tile[5,5];
+        tiles = new Tile[5,5];
 
         for (int j = 0; j < 5; j++)
             for (int i = 0; i < 5; i++) {
@@ -24,9 +27,18 @@ public class GameManager : Singleton<GameManager> {
                 }
             }
 	}
+
+    void GrowthStep() {
+        foreach (var t in this.tiles) {
+            t.BroadcastMessage("GrowthStep", SendMessageOptions.DontRequireReceiver);
+        }
+    }
 	
 	// Update is called once per frame
 	void Update () {
-	    
+        if (growNow) {
+            GrowthStep();
+            growNow = false;
+        }
 	}
 }
