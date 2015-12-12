@@ -14,19 +14,21 @@ public class Plant : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-	
+        SendMessageUpwards("PlantPlanted", this, SendMessageOptions.DontRequireReceiver);
 	}
 	
 	// Update is called once per frame
 	void Update () {
-	
+        // Move into update to make sure surrounding growth tiles bonus can still be applied.
+        if (currentProgress >= maxProgress) {
+            FinishedGrowing();
+        }
 	}
 
     void GrowthStep (float growthRate) {
         ApplyGrowth(growthRate);
 
         if (currentProgress >= maxProgress) {
-            FinishedGrowing();
             return;
         }
 
@@ -38,6 +40,7 @@ public class Plant : MonoBehaviour {
     }
 
     void FinishedGrowing () {
+        SendMessageUpwards("PlantFinished", this);
         Destroy(gameObject);
     }
 
