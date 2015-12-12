@@ -10,6 +10,8 @@ public class Plant : MonoBehaviour {
     public float currentProgress;
     public float maxProgress;
 
+    public float score;
+
     int currentSprite;
 
 	// Use this for initialization

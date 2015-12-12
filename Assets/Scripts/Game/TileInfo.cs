@@ -46,13 +46,15 @@ public class TileInfo : Singleton<TileInfo> {
         } else {
             title.text = plant.title;
 
+            var rate = plant is Mushrooms ? 1 : selectedTile.growthRate;
+
             builder.AppendLine("Growth status");
-            builder.AppendLine(IndentedLine(string.Format("Growth rate: {0}%", Mathf.RoundToInt(selectedTile.growthRate * 100))));
+            builder.AppendLine(IndentedLine(string.Format("Growth rate: {0}%", Mathf.RoundToInt(rate * 100))));
             builder.AppendLine(IndentedLine(string.Format("Turns left: {0}", Mathf.CeilToInt(
-                (plant.maxProgress - plant.currentProgress) / selectedTile.growthRate))));
+                (plant.maxProgress - plant.currentProgress) / rate))));
         }
 
-        if (selectedTile.influences.Count > 0) {
+        if (selectedTile.influences.Count > 0 && !(plant != null && plant is Mushrooms)) {
             if (plant != null)
                 builder.AppendLine();
             builder.AppendLine("Effects");
