@@ -8,7 +8,7 @@ public class ProduceCard : Card {
 
     private Plant plant;
 
-    protected override string title { get { return prefab.GetComponent<Plant>().name; } }
+    protected override string title { get { return prefab.GetComponent<Plant>().title; } }
     protected override string description {
         get {
             var p = prefab.GetComponent<Plant>();

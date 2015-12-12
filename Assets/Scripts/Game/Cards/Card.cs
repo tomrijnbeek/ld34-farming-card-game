@@ -40,6 +40,20 @@ public abstract class Card : MonoBehaviourBase {
         }
     }
 
+    public void Grow () {
+        if (Hand.Instance.cardActive)
+            return;
+        
+        transform.localScale = new Vector3(1.6f, 1.6f, 1);
+    }
+
+    public void Shrink () {
+        if (Hand.Instance.cardActive)
+            return;
+        
+        transform.localScale = Vector3.one;
+    }
+
     void Finished() {
         GameManager.Instance.ResetHighlightedTiles();
         Hand.Instance.ResetActiveCard();
@@ -55,6 +69,8 @@ public abstract class Card : MonoBehaviourBase {
             selector = null;
         }
         Hand.Instance.ResetActiveCard();
+
+        Shrink();
     }
 
     public void Disable(bool disable) {
