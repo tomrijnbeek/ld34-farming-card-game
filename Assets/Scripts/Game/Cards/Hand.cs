@@ -9,6 +9,7 @@ public class Hand : Singleton<Hand> {
 
 	// Use this for initialization
 	void Start () {
+        ReplenishHand ();
         RealignCards ();
 	}
 	
@@ -60,6 +61,9 @@ public class Hand : Singleton<Hand> {
     void InstantiateCard (GameObject prefab) {
         var obj = Instantiate(prefab);
         obj.transform.SetParent(transform);
-        cards.Add(obj.GetComponent<Card>());
+
+        var card = obj.GetComponent<Card>();
+        cards.Add(card);
+        card.Shrink();
     }
 }
