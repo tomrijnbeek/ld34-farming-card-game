@@ -25,11 +25,13 @@ public class Tile : MonoBehaviourBase {
     public void AddInfluence(GrowthRateInfluence influence) {
         growthRate += influence.amount;
         influences.Add(influence);
+        UpdateInfoMaybe();
     }
 
     public void EndInfluence(GrowthRateInfluence influence) {
         growthRate -= influence.amount;
         influences.RemoveAll(i => i == influence);
+        UpdateInfoMaybe();
     }
 
     void PlantPlanted(Plant p) {
@@ -39,8 +41,7 @@ public class Tile : MonoBehaviourBase {
             if (t.plant != null && t.plant.title == p.title)
                 IncreaseAdjacencyBonus();
         }
-        if (TileInfo.Instance.selectedTile == this)
-            TileInfo.Instance.UpdateInfo();
+        UpdateInfoMaybe();
     }
 
     void PlantFinished(Plant p) {
@@ -82,6 +83,11 @@ public class Tile : MonoBehaviourBase {
             adjacencyBonus.amount = 0;
             EndInfluence(adjacencyBonus);
         }
+    }
+
+    void UpdateInfoMaybe() {
+        if (TileInfo.Instance.selectedTile == this)
+            TileInfo.Instance.UpdateInfo();
     }
 
     public IEnumerable<Tile> AdjacentTiles () {

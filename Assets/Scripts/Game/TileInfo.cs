@@ -39,23 +39,22 @@ public class TileInfo : Singleton<TileInfo> {
         }
 
         var plant = selectedTile.plant;
+        var builder = new System.Text.StringBuilder();
 
         if (plant == null) {
             title.text = "Empty patch";
-            description.text = "";
-            return;
+        } else {
+            title.text = plant.title;
+
+            builder.AppendLine("Growth status");
+            builder.AppendLine(IndentedLine(string.Format("Growth rate: {0}%", Mathf.RoundToInt(selectedTile.growthRate * 100))));
+            builder.AppendLine(IndentedLine(string.Format("Turns left: {0}", Mathf.CeilToInt(
+                (plant.maxProgress - plant.currentProgress) / selectedTile.growthRate))));
         }
 
-        title.text = plant.title;
-
-        var builder = new System.Text.StringBuilder();
-        builder.AppendLine("Growth status");
-        builder.AppendLine(IndentedLine(string.Format("Growth rate: {0}%", Mathf.RoundToInt(selectedTile.growthRate * 100))));
-        builder.AppendLine(IndentedLine(string.Format("Turns left: {0}", Mathf.CeilToInt(
-            (plant.maxProgress - plant.currentProgress) / selectedTile.growthRate))));
-
         if (selectedTile.influences.Count > 0) {
-            builder.AppendLine();
+            if (plant != null)
+                builder.AppendLine();
             builder.AppendLine("Effects");
             foreach (var i in selectedTile.influences) {
                 builder.AppendLine(IndentedLine(i.GetString()));

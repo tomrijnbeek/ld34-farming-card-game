@@ -37,10 +37,25 @@ public class Hand : Singleton<Hand> {
 
     public void DiscardCard (Card c) {
         cards.RemoveAll(d => c == d);
-        Destroy(c.gameObject);
+        DestroyCard(c);
 
         ReplenishHand ();
         RealignCards ();
+    }
+
+    public void DiscardAll () {
+        foreach (var c in cards) {
+            DestroyCard(c);
+        }
+
+        cards.Clear();
+
+        ReplenishHand ();
+        RealignCards ();
+    }
+
+    void DestroyCard (Card c) {
+        Destroy(c.gameObject);
     }
 
     public void RealignCards () {
@@ -64,6 +79,6 @@ public class Hand : Singleton<Hand> {
 
         var card = obj.GetComponent<Card>();
         cards.Add(card);
-        card.Shrink();
+        card.transform.localScale = Vector3.one;
     }
 }
