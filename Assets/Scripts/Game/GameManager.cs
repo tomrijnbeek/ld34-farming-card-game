@@ -32,6 +32,7 @@ public class GameManager : Singleton<GameManager> {
         foreach (var t in this.tiles) {
             t.DoGrowthStep();
         }
+        EffectManager.Instance.GrowthStep();
     }
 	
 	// Update is called once per frame

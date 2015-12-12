@@ -16,8 +16,8 @@ public class Tile : MonoBehaviourBase {
 	
 	}
 
-    public void DoGrowthStep () {
-        BroadcastMessage("GrowthStep", growthRate, SendMessageOptions.DontRequireReceiver);
+    public void DoGrowthStep (float factor = 1) {
+        BroadcastMessage("GrowthStep", growthRate * factor, SendMessageOptions.DontRequireReceiver);
     }
 
     public void Highlight(bool highlight) {

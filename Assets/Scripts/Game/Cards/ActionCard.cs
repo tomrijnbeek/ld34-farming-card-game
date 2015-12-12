@@ -2,21 +2,22 @@
 using UnityEngine.Events;
 using System.Collections;
 
-public class ActionCard : Card {
-    protected override string title { get { return "Title"; } }
-    protected override string description { get { return "Description"; } }
+public abstract class ActionCard : Card {
+    protected override string title { get { return GetAction().title; } }
+    protected override string description { get { return GetAction().description; } }
 
-    void Start() {
-        
-    }
+    protected abstract Action GetAction();
 
     protected override TileSelector CreateTileSelector()
     {
-        return null;
-    }
+        var action = GetAction();
+        if (action.width == 0 || action.height == 0)
+            return null;
 
-    protected override void DoTheThing(Tile[] tiles)
-    {
-        
+        var selector = gameObject.AddComponent<TileSelector>();
+        selector.w = action.width;
+        selector.h = action.height;
+
+        return selector;
     }
 }
