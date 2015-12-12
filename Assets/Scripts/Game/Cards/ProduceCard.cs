@@ -8,6 +8,14 @@ public class ProduceCard : Card {
 
     private Plant plant;
 
+    protected override string title { get { return prefab.GetComponent<Plant>().name; } }
+    protected override string description {
+        get {
+            var p = prefab.GetComponent<Plant>();
+            return string.Format("Growth: {0} turns.\n{1}", Mathf.RoundToInt(p.maxProgress), p.specialEffect);
+        }
+    }
+
     void Start () {
         plant = prefab.GetComponent<Plant>();
         plantImage.sprite = plant.sprites[plant.sprites.Length - 1];

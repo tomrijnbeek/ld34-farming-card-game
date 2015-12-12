@@ -5,8 +5,17 @@ using System.Linq;
 public abstract class Card : MonoBehaviourBase {
     TileSelector selector;
 
+    bool textSet;
+    public Text titleText, descriptionText;
+
 	// Update is called once per frame
 	void Update () {
+        if (!textSet) {
+            titleText.text = title;
+            descriptionText.text = description;
+            textSet = true;
+        }
+
         if (selector) {
             if (Input.GetMouseButtonDown(0) && selector.validSelection) {
                 DoTheThing(selector.selectedTiles().ToArray());
@@ -54,6 +63,9 @@ public abstract class Card : MonoBehaviourBase {
         else
             GetComponent<CanvasGroup>().alpha = 1;
     }
+
+    protected abstract string title { get; }
+    protected abstract string description { get; }
 
     protected abstract TileSelector CreateTileSelector();
     protected abstract void DoTheThing(Tile[] tiles);
