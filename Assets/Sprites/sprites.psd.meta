@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: f31cec1c40462430ea277dc141013aa3
-timeCreated: 1449921434
+timeCreated: 1449931770
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -9,6 +9,7 @@ TextureImporter:
     21300004: plant_1
     21300006: plant_2
     21300008: plant_3
+    21300010: card_bg
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
@@ -750,6 +751,21 @@ TextureImporter:
         - {x: 61, y: 53}
         - {x: 61, y: 61}
         - {x: 54, y: 63}
+    - name: card_bg
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 768
+        width: 192
+        height: 256
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: -96, y: 128}
+        - {x: -96, y: -128}
+        - {x: 96, y: -128}
+        - {x: 96, y: 128}
     outline: []
   spritePackingTag: 
   userData: 

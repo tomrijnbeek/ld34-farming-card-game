@@ -41,4 +41,9 @@ public class GameManager : Singleton<GameManager> {
             growNow = false;
         }
 	}
+
+    public void ResetHighlightedTiles () {
+        foreach (var t in tiles)
+            t.Highlight(false);
+    }
 }

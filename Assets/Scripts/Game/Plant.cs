@@ -4,6 +4,8 @@ using System.Collections;
 public class Plant : MonoBehaviour {
 
     public Sprite[] sprites;
+    public string title;
+    public string specialEffect;
 
     public float currentProgress;
     public float maxProgress;

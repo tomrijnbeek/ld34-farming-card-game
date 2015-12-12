@@ -19,4 +19,12 @@ public class Tile : MonoBehaviourBase {
     public void DoGrowthStep () {
         BroadcastMessage("GrowthStep", growthRate, SendMessageOptions.DontRequireReceiver);
     }
+
+    public void Highlight(bool highlight) {
+        if (highlight) {
+            GetComponent<SpriteRenderer>().color = Color.red;
+        } else {
+            GetComponent<SpriteRenderer>().color = Color.white;
+        }
+    }
 }

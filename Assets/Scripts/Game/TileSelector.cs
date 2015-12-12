@@ -22,10 +22,10 @@ public class TileSelector : MonoBehaviour {
         validSelection = GetAxis(worldPos.x, w, out iFrom, out iTo) && GetAxis(worldPos.y, h, out jFrom, out jTo);
 
         foreach (var t in tiles)
-            t.GetComponent<SpriteRenderer>().color = Color.white;
+            t.Highlight(false);
         if (validSelection)
             foreach (var t in selectedTiles())
-                t.GetComponent<SpriteRenderer>().color = Color.red;
+                t.Highlight(true);
 	}
 
     public IEnumerable<Tile> selectedTiles() {
