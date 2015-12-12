@@ -30,7 +30,7 @@ public class GameManager : Singleton<GameManager> {
 
     void GrowthStep() {
         foreach (var t in this.tiles) {
-            t.BroadcastMessage("GrowthStep", SendMessageOptions.DontRequireReceiver);
+            t.DoGrowthStep();
         }
     }
 	

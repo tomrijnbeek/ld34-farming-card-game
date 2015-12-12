@@ -5,8 +5,8 @@ public class Plant : MonoBehaviour {
 
     public Sprite[] sprites;
 
-    public int currentStage;
-    public int numStages;
+    public float currentProgress;
+    public float maxProgress;
 
     int currentSprite;
 
@@ -20,15 +20,15 @@ public class Plant : MonoBehaviour {
 	
 	}
 
-    void GrowthStep () {
-        currentStage++;
+    void GrowthStep (float growthRate) {
+        ApplyGrowth(growthRate);
 
-        if (currentStage >= numStages) {
+        if (currentProgress >= maxProgress) {
             FinishedGrowing();
             return;
         }
 
-        int sprite = (sprites.Length * currentStage) / numStages;
+        int sprite = Mathf.FloorToInt((sprites.Length * currentProgress) / maxProgress);
         if (sprite != currentSprite) {
             GetComponent<SpriteRenderer>().sprite = sprites[sprite];
             currentSprite = sprite;
@@ -37,5 +37,9 @@ public class Plant : MonoBehaviour {
 
     void FinishedGrowing () {
         Destroy(gameObject);
+    }
+
+    protected virtual void ApplyGrowth(float growthRate) {
+        currentProgress += growthRate;
     }
 }
