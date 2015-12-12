@@ -35,6 +35,8 @@ public abstract class Card : MonoBehaviourBase {
         GameManager.Instance.ResetHighlightedTiles();
         Hand.Instance.ResetActiveCard();
         Hand.Instance.DiscardCard(this);
+
+        GameManager.Instance.GrowthStep();
     }
 
     void Cancelled() {

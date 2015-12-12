@@ -28,7 +28,7 @@ public class GameManager : Singleton<GameManager> {
             }
 	}
 
-    void GrowthStep() {
+    public void GrowthStep() {
         foreach (var t in this.tiles) {
             t.DoGrowthStep();
         }

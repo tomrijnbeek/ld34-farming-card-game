@@ -23,6 +23,11 @@ public class ProduceCard : Card {
 
     protected override void DoTheThing(Tile[] tiles)
     {
-        
+        if (tiles.Length != 1)
+            throw new UnityException("Unexpected number of tiles.");
+
+        var obj = Instantiate(prefab);
+        obj.transform.parent = tiles[0].transform;
+        obj.transform.localPosition = Vector3.zero;
     }
 }
