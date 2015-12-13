@@ -58,11 +58,11 @@ public class CardDefinitions : Singleton<CardDefinitions> {
             #endregion
 
             #region Effect
-            Effect("Rain shower", "Accelerates growth by 50%.", 2, GrowthInfluence("Rain shower", .5f), 10, 2),
+            Effect("Rain shower", "Accelerates growth by 50%.", 2, GrowthInfluence("Rain shower", .5f), 18, 2),
 
-            Effect("Sprinkler", "Accelerates growth in 3x3 area by 100%.", 4, GrowthInfluence("Sprinkler", 1), 10, 2, 3, 3),
+            Effect("Sprinkler", "Accelerates growth in 3x3 area by 100%.", 4, GrowthInfluence("Sprinkler", 1), 12, 2, 3, 3),
 
-            Effect("Weeds protection", "Protects a 2x2 area from weeds.", 12, TileEffect("Weed protection", Tile.TileEffects.WeedProtection), 15, 3,
+            Effect("Weeds protection", "Protects a 2x2 area from weeds.", 12, TileEffect("Weed protection", Tile.TileEffects.WeedProtection), 15, 1.5f,
                 2, 2),
             #endregion
 
@@ -81,7 +81,7 @@ public class CardDefinitions : Singleton<CardDefinitions> {
 
             Action("Temporal anomaly", "Instantly finishes a produce.", GrowthStep(1000), 10, .3f, 1, 1, AllProduce()),
 
-            Action("Weeds killer", "Removes weeds from a single tile.", DestroyProduce<Weeds>(), 3, 2, 1, 1, AllProduceOfType<Weeds>()),
+            Action("Weeds killer", "Removes weeds from a single tile.", DestroyProduce<Weeds>(), 3, 2.5f, 1, 1, AllProduceOfType<Weeds>()),
             #endregion
         };
     }
