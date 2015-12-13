@@ -1,9 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using System.Linq;
 
 public class TileSelector : MonoBehaviour {
 
     public int w, h;
+    public System.Predicate<Tile[]> selectionChecker;
 
     Tile[,] tiles { get { return GameManager.Instance.tiles; } }
 
@@ -19,18 +21,24 @@ public class TileSelector : MonoBehaviour {
 	void Update () {
         var worldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
-        validSelection = GetAxis(worldPos.x, w, out iFrom, out iTo) && GetAxis(worldPos.y, h, out jFrom, out jTo);
+        var hasSelection = GetAxis(worldPos.x, w, out iFrom, out iTo) && GetAxis(worldPos.y, h, out jFrom, out jTo);
+
+        if (selectionChecker != null) {
+            validSelection = hasSelection ? selectionChecker(selectedTiles().ToArray()) : false;
+        }
+        else
+            validSelection = hasSelection;
 
         foreach (var t in tiles)
-            t.Highlight(false);
-        if (validSelection)
+            t.Highlight(Tile.Selection.None);
+        if (hasSelection)
             foreach (var t in selectedTiles())
-                t.Highlight(true);
+                t.Highlight(validSelection ? Tile.Selection.Valid : Tile.Selection.Invalid);
 	}
 
     public IEnumerable<Tile> selectedTiles() {
-        if (!validSelection)
-            throw new UnityException("There is no valid selection to enumerate over.");
+//        if (!validSelection)
+//            throw new UnityException("There is no valid selection to enumerate over.");
 
         for (int j = jFrom; j <= jTo; j++)
             for (int i = iFrom; i <= iTo; i++)

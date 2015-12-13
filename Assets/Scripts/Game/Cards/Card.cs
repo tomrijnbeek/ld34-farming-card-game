@@ -90,6 +90,9 @@ public class Card : MonoBehaviourBase {
         selector.w = definition.areaWidth;
         selector.h = definition.areaHeight;
 
+        if (definition.AreaCheck != null)
+            selector.selectionChecker = definition.AreaCheck;
+
         return selector;
     }
 

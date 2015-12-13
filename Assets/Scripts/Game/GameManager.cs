@@ -52,6 +52,6 @@ public class GameManager : Singleton<GameManager> {
 
     public void ResetHighlightedTiles () {
         foreach (var t in tiles)
-            t.Highlight(false);
+            t.Highlight(Tile.Selection.None);
     }
 }

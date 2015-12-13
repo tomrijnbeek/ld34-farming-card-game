@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 public class CardDefinitions : Singleton<CardDefinitions> {
 
@@ -50,13 +51,13 @@ public class CardDefinitions : Singleton<CardDefinitions> {
             #endregion
 
             #region Action
-            Action("Compost", "Compost all empty tiles in a 2x2 area", Compost(), 3, 1, 2, 2),
+            Action("Compost", "Compost all empty tiles in a 2x2 area", Compost(), 3, 1, 2, 2, AnyEmpty()),
 
             Action("Dirty landry", "Discards entire hand.", t => Hand.Instance.DiscardAll(), 0, 1),
 
             Action("Growing spurt", "Advances all procude one extra step.", GrowthStep(1), 5, 1),
 
-            Action("Temporal anomaly", "Instantly finishes a produce.", GrowthStep(1000), 10, 1, 1, 1),
+            Action("Temporal anomaly", "Instantly finishes a produce.", GrowthStep(1000), 10, 1, 1, 1, AllProduce()),
             #endregion
         };
     }
@@ -91,12 +92,13 @@ public class CardDefinitions : Singleton<CardDefinitions> {
 
                 obj.transform.parent = tiles[0].transform;
                 obj.transform.localPosition = Vector3.zero;
-            }
+            },
+            AreaCheck = AllEmpty(),
         };
     }
 
     CardDefinition Effect(string name, string description, int duration, EffectDefinition action,
-            int cost, float w, int areaW = 0, int areaH = 0) {
+            int cost, float w, int areaW = 0, int areaH = 0, Predicate<Tile[]> areaCheck = null) {
         return new CardDefinition() {
             name = name,
             description = description,
@@ -106,6 +108,7 @@ public class CardDefinitions : Singleton<CardDefinitions> {
             pWeight = w,
             areaWidth = areaW,
             areaHeight = areaH,
+            AreaCheck = areaCheck,
             Do = tiles => {
                 EffectManager.Instance.AddEffect(new Effect(name, action, duration, tiles));
             }
@@ -113,7 +116,7 @@ public class CardDefinitions : Singleton<CardDefinitions> {
     }
 
     CardDefinition Action(string name, string description, Action<Tile[]> action,
-            int cost, int w, int areaW = 0, int areaH = 0) {
+            int cost, int w, int areaW = 0, int areaH = 0, Predicate<Tile[]> areaCheck = null) {
         return new CardDefinition() {
             name = name,
             description = description,
@@ -122,6 +125,7 @@ public class CardDefinitions : Singleton<CardDefinitions> {
             pWeight = w,
             areaWidth = areaW,
             areaHeight = areaH,
+            AreaCheck = areaCheck,
             Do = action
         };
     }
@@ -169,6 +173,16 @@ public class CardDefinitions : Singleton<CardDefinitions> {
             }
         };
     }
+
+    Predicate<Tile[]> AllProduce() {
+        return tiles => tiles.All(t => t.plant != null);
+    }
+    Predicate<Tile[]> AnyEmpty() {
+        return tiles => tiles.Any(t => t.plant == null);
+    }
+    Predicate<Tile[]> AllEmpty() {
+        return tiles => tiles.All(t => t.plant == null);
+    }
 }
 
 [Serializable]
@@ -184,6 +198,7 @@ public class CardDefinition {
     public int areaHeight;
 
     public Action<Tile[]> Do;
+    public Predicate<Tile[]> AreaCheck;
 }
 
 public class EffectDefinition {

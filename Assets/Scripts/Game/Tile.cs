@@ -9,6 +9,12 @@ public class Tile : MonoBehaviourBase {
         Composted = 2,
     }
 
+    public enum Selection {
+        None,
+        Valid,
+        Invalid,
+    }
+
     public Tile left, right, top, bottom;
     public float growthRate = 1;
     public Plant plant;
@@ -21,11 +27,17 @@ public class Tile : MonoBehaviourBase {
         BroadcastMessage("GrowthStep", (ignoreRate ? 1 : growthRate) * factor, SendMessageOptions.DontRequireReceiver);
     }
 
-    public void Highlight(bool highlight) {
-        if (highlight) {
-            GetComponent<SpriteRenderer>().color = Color.red;
-        } else {
-            GetComponent<SpriteRenderer>().color = Color.white;
+    public void Highlight(Selection selection) {
+        switch (selection) {
+            case Selection.None:
+                GetComponent<SpriteRenderer>().color = Color.white;
+                break;
+            case Selection.Valid:
+                GetComponent<SpriteRenderer>().color = Color.green;
+                break;
+            case Selection.Invalid:
+                GetComponent<SpriteRenderer>().color = Color.red;
+                break;
         }
     }
 
