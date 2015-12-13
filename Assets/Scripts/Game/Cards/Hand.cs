@@ -10,7 +10,6 @@ public class Hand : Singleton<Hand> {
 	// Use this for initialization
 	void Start () {
         cards = new List<Card>();
-        cardActive = false;
 
         // Two random cards, at least three usable cards.
         InitializeCard(Deck.Instance.GetRandomCard());
