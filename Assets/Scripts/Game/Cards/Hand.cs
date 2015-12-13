@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 
 public class Hand : Singleton<Hand> {
-
+    
     public List<Card> cards = new List<Card>();
 
     public bool cardActive;
@@ -70,14 +70,11 @@ public class Hand : Singleton<Hand> {
 
     public void ReplenishHand () {
         while (cards.Count < 5)
-            InstantiateCard(Deck.Instance.GetRandomPrefab());
+            InitializeCard(Deck.Instance.GetRandomCard());
     }
 
-    void InstantiateCard (GameObject prefab) {
-        var obj = Instantiate(prefab);
-        obj.transform.SetParent(transform);
-
-        var card = obj.GetComponent<Card>();
+    void InitializeCard (Card card) {
+        card.transform.SetParent(transform);
         cards.Add(card);
         card.transform.localScale = Vector3.one;
     }

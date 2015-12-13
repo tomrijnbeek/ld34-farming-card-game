@@ -6,6 +6,8 @@ public class GameManager : Singleton<GameManager> {
     public GameObject tilePrefab;
     public Tile[,] tiles;
 
+    public int currency;
+
     public bool growNow;
 
 	// Use this for initialization
@@ -29,6 +31,7 @@ public class GameManager : Singleton<GameManager> {
 	}
 
     public void GrowthStep() {
+        currency++;
         foreach (var t in this.tiles) {
             t.DoGrowthStep();
         }

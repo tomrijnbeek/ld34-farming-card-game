@@ -5,12 +5,11 @@ public class Plant : MonoBehaviour {
 
     public Sprite[] sprites;
     public string title;
-    public string specialEffect;
 
     public float currentProgress;
     public float maxProgress;
 
-    public float score;
+    public int score;
 
     int currentSprite;
 
@@ -22,7 +21,7 @@ public class Plant : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         // Move into update to make sure surrounding growth tiles bonus can still be applied.
-        if (currentProgress >= maxProgress) {
+        if (maxProgress > 0 && currentProgress >= maxProgress) {
             FinishedGrowing();
         }
 	}
@@ -35,6 +34,8 @@ public class Plant : MonoBehaviour {
         }
 
         int sprite = Mathf.FloorToInt((sprites.Length * (currentProgress - 1)) / (maxProgress - 1));
+        sprite = Mathf.Clamp(sprite, 0, sprites.Length - 1);
+
         if (sprite != currentSprite) {
             GetComponent<SpriteRenderer>().sprite = sprites[sprite];
             currentSprite = sprite;
@@ -43,6 +44,7 @@ public class Plant : MonoBehaviour {
 
     void FinishedGrowing () {
         SendMessageUpwards("PlantFinished", this);
+        GameManager.Instance.currency += score;
         Destroy(gameObject);
     }
 

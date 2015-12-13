@@ -3,30 +3,36 @@ using System.Linq;
 
 public class Deck : Singleton<Deck> {
 
-    public DeckItem[] deck;
+    public GameObject cardPrefab;
     public float[] weights;
 
     void Start () {
+        var deck = CardDefinitions.Instance.cards;
+
         weights = new float[deck.Length];
         float current = 0;
 
         for (int i = 0; i < deck.Length; i++) {
-            current += deck[i].weight;
+            current += deck[i].pWeight;
             weights[i] = current;
-        }
+        } 
     }
 
-    public GameObject GetRandomPrefab () {
+    CardDefinition GetRandomDefinition () {
         var r = Random.value * weights[weights.Length - 1];
         var i = System.Array.BinarySearch(weights, r);
         if (i < 0)
             i = ~i;
-        return deck[i].cardPrefab;
+        return CardDefinitions.Instance.cards[i];
     }
-}
 
-[System.Serializable]
-public class DeckItem {
-    public GameObject cardPrefab;
-    public float weight;
+    public Card GetRandomCard () {
+        var def = GetRandomDefinition();
+
+        var obj = Instantiate(cardPrefab);
+        var card = obj.GetComponent<Card>();
+        card.UpdateInfo(def);
+
+        return card;
+    }
 }

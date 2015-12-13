@@ -2,23 +2,44 @@
 using UnityEngine.UI;
 using System.Linq;
 
-public abstract class Card : MonoBehaviourBase {
-    TileSelector selector;
+public class Card : MonoBehaviourBase {
 
-    bool textSet;
-    public Text titleText, descriptionText;
+    public CardDefinition definition;
+    TileSelector selector;
+    public Text titleText, descriptionText, costText, durationText, gainText;
+
+    public void UpdateInfo(CardDefinition def) {
+        definition = def;
+
+        // Colors
+        GetComponent<Image>().color = CardDefinitions.Instance.backColors[(int)def.type];
+        foreach (var comp in GetComponentsInChildren<Text>()) {
+            comp.color = CardDefinitions.Instance.textColors[(int)def.type];
+        }
+
+        // Text
+        titleText.text = def.name;
+        descriptionText.text = def.description;
+        if (def.cost != 0)
+            costText.text = FormatCurrency(def.cost);
+        if (def.turns != 0)
+            durationText.text = FormatDuration(def.turns);
+        if (def.gain != 0)
+            gainText.text = FormatCurrency(def.gain);
+    }
+
+    string FormatCurrency(int cost) {
+        return string.Format("${0}", cost);
+    }
+    string FormatDuration(int turns) {
+        return string.Format("{0} turns", turns);
+    }
 
 	// Update is called once per frame
 	void Update () {
-        if (!textSet) {
-            titleText.text = title;
-            descriptionText.text = description;
-            textSet = true;
-        }
-
         if (selector) {
             if (Input.GetMouseButtonDown(0) && selector.validSelection) {
-                DoTheThing(selector.selectedTiles().ToArray());
+                definition.Do(selector.selectedTiles().ToArray());
                 Finished();
             } else if (Input.GetMouseButtonDown(1)) {
                 Cancelled();
@@ -35,23 +56,9 @@ public abstract class Card : MonoBehaviourBase {
         selector = CreateTileSelector();
 
         if (!selector) {
-            DoTheThing(GameManager.Instance.tiles.Cast<Tile>().ToArray());
+            definition.Do(GameManager.Instance.tiles.Cast<Tile>().ToArray());
             Finished();
         }
-    }
-
-    public void Grow () {
-        if (Hand.Instance.cardActive)
-            return;
-        
-        transform.localScale = new Vector3(1.6f, 1.6f, 1);
-    }
-
-    public void Shrink () {
-        if (Hand.Instance.cardActive)
-            return;
-        
-        transform.localScale = Vector3.one;
     }
 
     void Finished() {
@@ -73,16 +80,36 @@ public abstract class Card : MonoBehaviourBase {
         Shrink();
     }
 
+    TileSelector CreateTileSelector()
+    {
+        if (definition.areaWidth == 0 || definition.areaHeight == 0)
+            return null;
+
+        var selector = gameObject.AddComponent<TileSelector>();
+        selector.w = definition.areaWidth;
+        selector.h = definition.areaHeight;
+
+        return selector;
+    }
+
+    public void Grow () {
+        if (Hand.Instance.cardActive)
+            return;
+
+        transform.localScale = new Vector3(1.6f, 1.6f, 1);
+    }
+
+    public void Shrink () {
+        if (Hand.Instance.cardActive)
+            return;
+
+        transform.localScale = Vector3.one;
+    }
+
     public void Disable(bool disable) {
         if (disable)
             GetComponent<CanvasGroup>().alpha = .3f;
         else
             GetComponent<CanvasGroup>().alpha = 1;
     }
-
-    protected abstract string title { get; }
-    protected abstract string description { get; }
-
-    protected abstract TileSelector CreateTileSelector();
-    protected abstract void DoTheThing(Tile[] tiles);
 }
