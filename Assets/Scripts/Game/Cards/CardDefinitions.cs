@@ -40,7 +40,7 @@ public class CardDefinitions : Singleton<CardDefinitions> {
             Plant<Plant>("Recyclable plant", "Leaves the tile composted after growing", "plant", 18, 2, 6, 3,
                 go => SelfEffect(go, new EffectDefinition() {
                     Do = tiles => { },
-                    Undo = Compost(),
+                    Undo = Compost(true),
                 })
             ),
 
@@ -194,10 +194,10 @@ public class CardDefinitions : Singleton<CardDefinitions> {
         };
     }
 
-    Action<Tile[]> Compost() {
+    Action<Tile[]> Compost(bool filledTilesToo = false) {
         return tiles => {
             foreach (var t in tiles) {
-                if (t.plant == null)
+                if (t.plant == null || filledTilesToo)
                     t.Compost();
             }
         };

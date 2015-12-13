@@ -64,6 +64,9 @@ public class Tile : MonoBehaviourBase {
     }
 
     void PlantPlanted(Plant p) {
+        if (plant != null)
+            p.SendMessage("DoDestroy");
+
         plant = p;
         foreach (var t in AdjacentTiles()) {
             t.NeighbourPlantPlanted(p);
