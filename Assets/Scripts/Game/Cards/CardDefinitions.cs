@@ -27,20 +27,20 @@ public class CardDefinitions : Singleton<CardDefinitions> {
 
         cards = new [] {
             #region Produce
-            Plant<Plant>("Basic plant", "", "plant", 9, 0, 5, 1),
+            Plant<Plant>("Basic plant", "", "plant", 18, 0, 4, 10),
 
-            Plant<Plant>("Large plant", "Reduces growth in neighbouring tiles by 50%.", "plant", 7, 0, 10, 1,
+            Plant<Plant>("Large plant", "Reduces growth in neighbouring tiles by 50%.", "plant", 10, 0, 8, 8,
                 go => NeighbourEffect(go, GrowthInfluence("Large plant adjacency", -.5f))
             ),
 
-            Plant<Plant>("Recyclable plant", "Leaves the tile composted after growing", "plant", 11, 2, 6, 1,
+            Plant<Plant>("Recyclable plant", "Leaves the tile composted after growing", "plant", 15, 2, 6, 5,
                 go => SelfEffect(go, new EffectDefinition() {
                     Do = tiles => { },
                     Undo = Compost(),
                 })
             ),
 
-            Plant<TreePlant>("Small tree", "Doesn't disappear when fully grown.\nProvides shadow in adjacent tiles when grown.", "tree", 21, 3, 0, 1,
+            Plant<TreePlant>("Small tree", "Doesn't disappear when fully grown.\nProvides shadow in adjacent tiles when grown.", "tree", 25, 3, 0, 2,
                 go => NeighbourEffect(go, new EffectDefinition() {
                     Do = tiles => { },
                     Undo = tiles => {
@@ -50,23 +50,23 @@ public class CardDefinitions : Singleton<CardDefinitions> {
             ),
 
             Plant<Mushrooms>("Mushrooms", "Not affected by growth bonuses, but grows 50% in shadow.", "mushrooms",
-                15, 0, 12, 1),
+                15, 0, 10, 3),
             #endregion
 
             #region Effect
-            Effect("Rain shower", "Accelerates growth by 50%.", 2, GrowthInfluence("Rain shower", .5f), 10, 1),
+            Effect("Rain shower", "Accelerates growth by 50%.", 2, GrowthInfluence("Rain shower", .5f), 10, 2),
 
-            Effect("Sprinkler", "Accelerates growth in 3x3 area by 100%.", 4, GrowthInfluence("Sprinkler", 1), 10, 1, 3, 3),
+            Effect("Sprinkler", "Accelerates growth in 3x3 area by 100%.", 4, GrowthInfluence("Sprinkler", 1), 10, 2, 3, 3),
             #endregion
 
             #region Action
-            Action("Compost", "Compost all empty tiles in a 2x2 area", Compost(), 3, 1, 2, 2, AnyEmpty()),
+            Action("Compost", "Compost all empty tiles in a 2x2 area", Compost(), 3, 1.5f, 2, 2, AnyEmpty()),
 
-            Action("Dirty landry", "Discards entire hand.", t => Hand.Instance.DiscardAll(), 0, 1),
+            Action("Dirty laundry", "Discards entire hand.", t => Hand.Instance.DiscardAll(), 10, .3f),
 
-            Action("Growing spurt", "Advances all procude one extra step.", GrowthStep(1), 5, 1),
+            Action("Growing spurt", "Advances all procude one extra step.", GrowthStep(1), 5, .5f),
 
-            Action("Temporal anomaly", "Instantly finishes a produce.", GrowthStep(1000), 10, 1, 1, 1, AllProduce()),
+            Action("Temporal anomaly", "Instantly finishes a produce.", GrowthStep(1000), 10, .3f, 1, 1, AllProduce()),
             #endregion
         };
     }
@@ -125,7 +125,7 @@ public class CardDefinitions : Singleton<CardDefinitions> {
     }
 
     CardDefinition Action(string name, string description, Action<Tile[]> action,
-            int cost, int w, int areaW = 0, int areaH = 0, Predicate<Tile[]> areaCheck = null) {
+            int cost, float w, int areaW = 0, int areaH = 0, Predicate<Tile[]> areaCheck = null) {
         return new CardDefinition() {
             name = name,
             description = description,

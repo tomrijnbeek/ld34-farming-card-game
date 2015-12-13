@@ -7,6 +7,7 @@ public class Tile : MonoBehaviourBase {
         None = 0,
         Shadow = 1,
         Composted = 2,
+        WeedProtection = 4,
     }
 
     public enum Selection {
