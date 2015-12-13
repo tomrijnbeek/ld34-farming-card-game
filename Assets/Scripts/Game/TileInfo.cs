@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using System.Text.RegularExpressions;
 
 public class TileInfo : Singleton<TileInfo> {
 
@@ -46,7 +47,9 @@ public class TileInfo : Singleton<TileInfo> {
         } else {
             title.text = plant.title;
 
-            var rate = plant is Mushrooms ? ((selectedTile.tileEffects & Tile.TileEffects.Shadow) > 0 ? 1.5f : 1) : selectedTile.growthRate;
+            var rate = plant is Mushrooms
+                ? ((selectedTile.tileEffects & Tile.TileEffects.Shadow) > 0 ? 1.5f : 1)
+                : (plant is Weeds ? 1 : selectedTile.growthRate);
 
             builder.AppendLine("Growth status");
             if (plant.currentProgress >= plant.maxProgress)
@@ -64,11 +67,11 @@ public class TileInfo : Singleton<TileInfo> {
             
             foreach (var e in System.Enum.GetValues(typeof(Tile.TileEffects))) {
                 if ((selectedTile.tileEffects & (Tile.TileEffects)e) > 0)
-                    builder.AppendLine(e.ToString());
+                    builder.AppendLine(Regex.Replace(e.ToString(), "(\\B[A-Z])", " $1"));
             }
         }
 
-        if (selectedTile.influences.Count > 0 && !(plant != null && plant is Mushrooms)) {
+        if (selectedTile.influences.Count > 0 && !(plant != null && (plant is Mushrooms || plant is Weeds))) {
             if (plant != null)
                 builder.AppendLine();
             builder.AppendLine("Effects");

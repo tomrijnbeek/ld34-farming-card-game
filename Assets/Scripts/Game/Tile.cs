@@ -20,6 +20,7 @@ public class Tile : MonoBehaviourBase {
     public float growthRate = 1;
     public Plant plant;
     public TileEffects tileEffects = TileEffects.None;
+    Dictionary<TileEffects, int> tileEffectStack = new Dictionary<TileEffects, int>();
 
     public List<GrowthRateInfluence> influences = new List<GrowthRateInfluence>();
     GrowthRateInfluence adjacencyBonus, compostBonus;
@@ -84,9 +85,14 @@ public class Tile : MonoBehaviourBase {
     }
 
     void PlantFinished(Plant p) {
-        if (p is TreePlant)
-            return;
+        // End compost bonus
+        if (compostBonus != null) {
+            EndInfluence(compostBonus);
+            compostBonus = null;
+        }
+    }
 
+    void PlantDestroyed(Plant p) {
         foreach (var t in AdjacentTiles()) {
             t.NeighbourPlantFinished(p);
         }
@@ -96,12 +102,6 @@ public class Tile : MonoBehaviourBase {
         if (adjacencyBonus != null) {
             EndInfluence(adjacencyBonus);
             adjacencyBonus = null;
-        }
-
-        // End compost bonus
-        if (compostBonus != null) {
-            EndInfluence(compostBonus);
-            compostBonus = null;
         }
     }
 
@@ -116,6 +116,23 @@ public class Tile : MonoBehaviourBase {
     public void Compost () {
         tileEffects |= TileEffects.Composted;
         UpdateInfoMaybe();
+    }
+
+    public void AddEffect (TileEffects e) {
+        tileEffects |= e;
+
+        if (!tileEffectStack.ContainsKey(e)) {
+            tileEffectStack.Add(e, 1);
+        } else {
+            tileEffectStack[e]++;
+        }
+    }
+
+    public void RemoveEffect (TileEffects e) {
+        tileEffectStack[e]--;
+        if (tileEffectStack[e] <= 0) {
+            tileEffects -= (e & tileEffects);
+        }
     }
 
     void IncreaseAdjacencyBonus() {

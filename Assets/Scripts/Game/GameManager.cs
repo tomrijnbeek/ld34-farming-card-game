@@ -5,6 +5,7 @@ using System.Linq;
 public class GameManager : Singleton<GameManager> {
 
     public GameObject tilePrefab;
+    public GameObject weedPrefab;
     public Tile[,] tiles;
 
     public int currency;
@@ -31,6 +32,13 @@ public class GameManager : Singleton<GameManager> {
                     tiles[i,j].bottom = tiles[i,j-1];
                 }
             }
+
+        // Some initial weeds.
+        var tile = tiles[Random.Range(0, 5), Random.Range(0,5)];
+
+        var weedObj = Instantiate(weedPrefab);
+        weedObj.transform.parent = tile.transform;
+        weedObj.transform.localPosition = new Vector3(0, 0, -1);
 	}
 
     public void GrowthStep() {

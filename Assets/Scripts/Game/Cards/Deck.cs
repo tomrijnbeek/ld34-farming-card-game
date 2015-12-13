@@ -26,8 +26,14 @@ public class Deck : Singleton<Deck> {
         return CardDefinitions.Instance.cards[i];
     }
 
-    public Card GetRandomCard () {
+    public Card GetRandomCard (bool onlyFree = false) {
         var def = GetRandomDefinition();
+
+        if (onlyFree) {
+            while (def.cost > 0) {
+                def = GetRandomDefinition();
+            }
+        }
 
         var obj = Instantiate(cardPrefab);
         var card = obj.GetComponent<Card>();

@@ -9,7 +9,11 @@ public class Hand : Singleton<Hand> {
 
 	// Use this for initialization
 	void Start () {
-        ReplenishHand ();
+        // Two random cards, at least three usable cards.
+        InitializeCard(Deck.Instance.GetRandomCard());
+        InitializeCard(Deck.Instance.GetRandomCard());
+        ReplenishHand (true);
+
         RealignCards ();
 	}
 	
@@ -72,9 +76,9 @@ public class Hand : Singleton<Hand> {
         }
     }
 
-    public void ReplenishHand () {
+    public void ReplenishHand (bool onlyFreeCards = false) {
         while (cards.Count < 5)
-            InitializeCard(Deck.Instance.GetRandomCard());
+            InitializeCard(Deck.Instance.GetRandomCard(onlyFreeCards));
     }
 
     void InitializeCard (Card card) {

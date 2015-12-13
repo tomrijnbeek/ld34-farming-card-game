@@ -29,11 +29,15 @@ public class CardDefinitions : Singleton<CardDefinitions> {
             #region Produce
             Plant<Plant>("Basic plant", "", "plant", 18, 0, 4, 10),
 
-            Plant<Plant>("Large plant", "Reduces growth in neighbouring tiles by 50%.", "plant", 10, 0, 8, 8,
+            Plant<Plant>("White lily", "Prevents weeds from spawning in adjacent tiles.", "plant", 16, 2, 6, 3,
+                go => NeighbourEffect(go, TileEffect("White lily protection", Tile.TileEffects.WeedProtection))
+            ),
+
+            Plant<Plant>("Large plant", "Reduces growth in neighbouring tiles by 50%.", "plant", 10, 0, 8, 5,
                 go => NeighbourEffect(go, GrowthInfluence("Large plant adjacency", -.5f))
             ),
 
-            Plant<Plant>("Recyclable plant", "Leaves the tile composted after growing", "plant", 15, 2, 6, 5,
+            Plant<Plant>("Recyclable plant", "Leaves the tile composted after growing", "plant", 15, 2, 6, 3,
                 go => SelfEffect(go, new EffectDefinition() {
                     Do = tiles => { },
                     Undo = Compost(),
@@ -44,7 +48,7 @@ public class CardDefinitions : Singleton<CardDefinitions> {
                 go => NeighbourEffect(go, new EffectDefinition() {
                     Do = tiles => { },
                     Undo = tiles => {
-                        foreach (var t in tiles) t.tileEffects |= Tile.TileEffects.Shadow;
+                        foreach (var t in tiles) t.AddEffect(Tile.TileEffects.Shadow);
                     }
                 })
             ),
@@ -57,16 +61,27 @@ public class CardDefinitions : Singleton<CardDefinitions> {
             Effect("Rain shower", "Accelerates growth by 50%.", 2, GrowthInfluence("Rain shower", .5f), 10, 2),
 
             Effect("Sprinkler", "Accelerates growth in 3x3 area by 100%.", 4, GrowthInfluence("Sprinkler", 1), 10, 2, 3, 3),
+
+            Effect("Weeds protection", "Protects a 2x2 area from weeds.", 12, TileEffect("Weed protection", Tile.TileEffects.WeedProtection), 15, 3,
+                2, 2, AllProduceOfType<Weeds>()),
             #endregion
 
             #region Action
+            Action("Bored of it", "Destroy a normal plant.", DestroyProduce<Plant>(), 4, 1, 1, 1, AllProduceOfType<Plant>()),
+
             Action("Compost", "Compost all empty tiles in a 2x2 area", Compost(), 3, 1.5f, 2, 2, AnyEmpty()),
 
             Action("Dirty laundry", "Discards entire hand.", t => Hand.Instance.DiscardAll(), 10, .3f),
 
             Action("Growing spurt", "Advances all procude one extra step.", GrowthStep(1), 5, .5f),
 
+            Action("Lumberjack", "Cuts down a tree", DestroyProduce<TreePlant>(), 8, .8f, 1, 1, AllProduceOfType<TreePlant>()),
+
+            Action("Super effective", "Destroys all weeds", DestroyProduce<Weeds>(), 50, .4f),
+
             Action("Temporal anomaly", "Instantly finishes a produce.", GrowthStep(1000), 10, .3f, 1, 1, AllProduce()),
+
+            Action("Weeds killer", "Removes weeds from a single tile.", DestroyProduce<Weeds>(), 3, 2, 1, 1, AllProduceOfType<Weeds>()),
             #endregion
         };
     }
@@ -100,7 +115,7 @@ public class CardDefinitions : Singleton<CardDefinitions> {
                     specialStuff(obj);
 
                 obj.transform.parent = tiles[0].transform;
-                obj.transform.localPosition = Vector3.zero;
+                obj.transform.localPosition = obj.transform.localPosition = new Vector3(0, 0, -1);;
             },
             AreaCheck = AllEmpty(),
         };
@@ -166,6 +181,19 @@ public class CardDefinitions : Singleton<CardDefinitions> {
         };
     }
 
+    EffectDefinition TileEffect(string desc, Tile.TileEffects effect) {
+        return new EffectDefinition() {
+            Do = tiles => {
+                foreach (var t in tiles)
+                    t.AddEffect(effect);
+            },
+            Undo = tiles => {
+                foreach (var t in tiles)
+                    t.RemoveEffect(effect);
+            }
+        };
+    }
+
     Action<Tile[]> Compost() {
         return tiles => {
             foreach (var t in tiles) {
@@ -177,14 +205,28 @@ public class CardDefinitions : Singleton<CardDefinitions> {
 
     Action<Tile[]> GrowthStep(float factor, bool ignoreRate = true) {
         return tiles => {
-            foreach (var t in tiles) {
+            foreach (var t in tiles.Where(t1 => t1.plant != null && !(t1.plant is Weeds))) {
                 t.DoGrowthStep(factor, ignoreRate);
             }
         };
     }
 
-    Predicate<Tile[]> AllProduce() {
-        return tiles => tiles.All(t => t.plant != null);
+    Action<Tile[]> DestroyProduce<T>() where T : Plant {
+        return tiles => {
+            foreach (var t in tiles.Where(t1 => t1.plant != null && (t1 is T))) {
+                t.BroadcastMessage("DoDestroy");
+            }
+        };
+    }
+
+    Predicate<Tile[]> AllProduce(bool includeWeeds = false) {
+        return tiles => tiles.All(t => t.plant != null && (includeWeeds || !(t.plant is Weeds)));
+    }
+    Predicate<Tile[]> AnyProduce(bool includeWeeds = false) {
+        return tiles => tiles.Any(t => t.plant != null && (includeWeeds || !(t.plant is Weeds)));
+    }
+    Predicate<Tile[]> AllProduceOfType<T>() where T : Plant {
+        return tiles => tiles.All(t => t.plant != null && t is T);
     }
     Predicate<Tile[]> AnyEmpty() {
         return tiles => tiles.Any(t => t.plant == null);

@@ -12,6 +12,7 @@ public class Plant : MonoBehaviour {
     public int score;
 
     int currentSprite;
+    bool ranFinished;
 
 	// Use this for initialization
 	void Start () {
@@ -22,8 +23,9 @@ public class Plant : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         // Move into update to make sure surrounding growth tiles bonus can still be applied.
-        if (maxProgress > 0 && currentProgress >= maxProgress) {
+        if (maxProgress > 0 && currentProgress >= maxProgress && !ranFinished) {
             FinishedGrowing();
+            ranFinished = true;
         }
 	}
 
@@ -42,10 +44,19 @@ public class Plant : MonoBehaviour {
     protected virtual void FinishedGrowing () {
         SendMessageUpwards("PlantFinished", this);
         GameManager.Instance.currency += score;
-        Destroy(gameObject);
+        DestroyPlant();
     }
 
     protected virtual void ApplyGrowth(float growthRate) {
         currentProgress += growthRate;
+    }
+
+    void DoDestroy() {
+        DestroyPlant();
+    }
+
+    protected virtual void DestroyPlant () {
+        SendMessageUpwards("PlantDestroyed", this);
+        Destroy(gameObject);
     }
 }
