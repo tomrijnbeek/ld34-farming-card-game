@@ -40,6 +40,15 @@ public class CardDefinitions : Singleton<CardDefinitions> {
                 })
             ),
 
+            Plant<TreePlant>("Small tree", "Doesn't disappear when fully grown.\nProvides shadow in adjacent tiles when grown.", "tree", 21, 3, 0, 1,
+                go => NeighbourEffect(go, new EffectDefinition() {
+                    Do = tiles => { },
+                    Undo = tiles => {
+                        foreach (var t in tiles) t.tileEffects |= Tile.TileEffects.Shadow;
+                    }
+                })
+            ),
+
             Plant<Mushrooms>("Mushrooms", "Not affected by growth bonuses, but grows 50% in shadow.", "mushrooms",
                 15, 0, 12, 1),
             #endregion

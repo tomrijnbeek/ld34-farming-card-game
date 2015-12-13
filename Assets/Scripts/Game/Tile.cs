@@ -24,7 +24,15 @@ public class Tile : MonoBehaviourBase {
     GrowthRateInfluence adjacencyBonus, compostBonus;
 
     public void DoGrowthStep (float factor = 1, bool ignoreRate = false) {
-        BroadcastMessage("GrowthStep", (ignoreRate ? 1 : growthRate) * factor, SendMessageOptions.DontRequireReceiver);
+        if (plant == null)
+            return;
+
+        var rate = ignoreRate ? 1 : growthRate;
+
+        if (!ignoreRate && plant is Mushrooms)
+            rate = (tileEffects & TileEffects.Shadow) > 0 ? 1.5f : 1;
+
+        plant.GrowthStep(rate * factor);
     }
 
     public void Highlight(Selection selection) {
@@ -75,6 +83,9 @@ public class Tile : MonoBehaviourBase {
     }
 
     void PlantFinished(Plant p) {
+        if (p is TreePlant)
+            return;
+
         foreach (var t in AdjacentTiles()) {
             t.NeighbourPlantFinished(p);
         }

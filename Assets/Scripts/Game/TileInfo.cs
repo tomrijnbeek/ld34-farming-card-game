@@ -46,12 +46,16 @@ public class TileInfo : Singleton<TileInfo> {
         } else {
             title.text = plant.title;
 
-            var rate = plant is Mushrooms ? 1 : selectedTile.growthRate;
+            var rate = plant is Mushrooms ? ((selectedTile.tileEffects & Tile.TileEffects.Shadow) > 0 ? 1.5f : 1) : selectedTile.growthRate;
 
             builder.AppendLine("Growth status");
-            builder.AppendLine(IndentedLine(string.Format("Growth rate: {0}%", Mathf.RoundToInt(rate * 100))));
-            builder.AppendLine(IndentedLine(string.Format("Turns left: {0}", Mathf.CeilToInt(
-                (plant.maxProgress - plant.currentProgress) / rate))));
+            if (plant.currentProgress >= plant.maxProgress)
+                builder.AppendLine("Fully grown");
+            else {
+                builder.AppendLine(IndentedLine(string.Format("Growth rate: {0}%", Mathf.RoundToInt(rate * 100))));
+                builder.AppendLine(IndentedLine(string.Format("Turns left: {0}", Mathf.CeilToInt(
+                    (plant.maxProgress - plant.currentProgress) / rate))));
+            }
         }
 
         if (selectedTile.tileEffects != Tile.TileEffects.None) {
@@ -71,6 +75,12 @@ public class TileInfo : Singleton<TileInfo> {
             foreach (var i in selectedTile.influences) {
                 builder.AppendLine(IndentedLine(i.GetString()));
             }
+        }
+
+        if (plant != null && plant is Mushrooms && (selectedTile.tileEffects & Tile.TileEffects.Shadow) > 0) {
+            builder.AppendLine();
+            builder.AppendLine("Effects");
+            builder.AppendLine("  Shadow: +50%");
         }
 
         description.text = builder.ToString();

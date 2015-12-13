@@ -16,6 +16,7 @@ public class Plant : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         SendMessageUpwards("PlantPlanted", this, SendMessageOptions.DontRequireReceiver);
+        GetComponent<SpriteRenderer>().sprite = sprites[currentSprite];
 	}
 	
 	// Update is called once per frame
@@ -26,12 +27,8 @@ public class Plant : MonoBehaviour {
         }
 	}
 
-    void GrowthStep (float growthRate) {
+    public void GrowthStep (float growthRate) {
         ApplyGrowth(growthRate);
-
-        if (currentProgress >= maxProgress) {
-            return;
-        }
 
         int sprite = Mathf.FloorToInt((sprites.Length * (currentProgress - 1)) / (maxProgress - 1));
         sprite = Mathf.Clamp(sprite, 0, sprites.Length - 1);
@@ -42,7 +39,7 @@ public class Plant : MonoBehaviour {
         }
     }
 
-    void FinishedGrowing () {
+    protected virtual void FinishedGrowing () {
         SendMessageUpwards("PlantFinished", this);
         GameManager.Instance.currency += score;
         Destroy(gameObject);
