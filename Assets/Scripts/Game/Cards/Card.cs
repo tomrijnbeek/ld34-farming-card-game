@@ -8,6 +8,15 @@ public class Card : MonoBehaviourBase {
     TileSelector selector;
     public Text titleText, descriptionText, costText, durationText, gainText;
 
+    public bool usable {
+        get {
+            if (definition.cost > GameManager.Instance.currency) return false;
+            if (definition.type == CardDefinitions.CardTypes.Produce && GameManager.Instance.tiles.Cast<Tile>()
+                .All(t => t.plant != null)) return false;
+            return true;
+        }
+    }
+
     public void UpdateInfo(CardDefinition def) {
         definition = def;
 
@@ -48,7 +57,7 @@ public class Card : MonoBehaviourBase {
 	}
 
     public virtual void Activate () {
-        if (Hand.Instance.cardActive)
+        if (!usable || Hand.Instance.cardActive)
             return;
 
         Hand.Instance.SetActiveCard(this);

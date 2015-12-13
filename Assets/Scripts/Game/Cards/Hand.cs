@@ -15,7 +15,11 @@ public class Hand : Singleton<Hand> {
 	
 	// Update is called once per frame
 	void Update () {
-	
+        if (!cardActive) {
+            foreach (var c in cards) {
+                c.Disable(!c.usable);
+            }
+        }
 	}
 
     public void SetActiveCard (Card c) {
@@ -31,7 +35,7 @@ public class Hand : Singleton<Hand> {
         cardActive = false;
 
         foreach (var c in cards) {
-            c.Disable(false);
+            c.Disable(!c.usable);
         }
     }
 

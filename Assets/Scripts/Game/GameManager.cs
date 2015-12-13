@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Linq;
 
 public class GameManager : Singleton<GameManager> {
 
@@ -38,6 +39,10 @@ public class GameManager : Singleton<GameManager> {
             t.DoGrowthStep();
         }
         EffectManager.Instance.GrowthStep();
+
+        if (Hand.Instance.cards.All(c => !c.usable)) {
+            GameOver ();
+        }
     }
 	
 	// Update is called once per frame
@@ -53,5 +58,9 @@ public class GameManager : Singleton<GameManager> {
     public void ResetHighlightedTiles () {
         foreach (var t in tiles)
             t.Highlight(Tile.Selection.None);
+    }
+
+    void GameOver () {
+        Debug.Log("Game over");
     }
 }
