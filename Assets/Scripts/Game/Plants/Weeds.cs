@@ -48,12 +48,14 @@ public class Weeds : Plant {
     }
 
     protected override void DestroyPlant() {
-        var tile = GetComponentInParent<Tile>();
-        if (tile == null)
-            return;
+        if (weedsInfluence != null) {
+            var tile = GetComponentInParent<Tile>();
+            if (tile == null)
+                return;
 
-        foreach (var t in tile.AdjacentTiles())
-            t.EndInfluence(weedsInfluence);
+            foreach (var t in tile.AdjacentTiles())
+                t.EndInfluence(weedsInfluence);
+        }
 
         Destroy(gameObject);
     }
