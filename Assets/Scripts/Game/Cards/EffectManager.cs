@@ -4,6 +4,7 @@ using System.Collections.Generic;
 public class EffectManager : Singleton<EffectManager> {
 
     public List<Effect> activeEffects = new List<Effect>();
+    public UnityEngine.UI.Text effectsText;
 
     public void AddEffect(Effect e) {
         e.Start();
@@ -19,5 +20,16 @@ public class EffectManager : Singleton<EffectManager> {
         }
 
         activeEffects.RemoveAll(e => e.turnsLeft <= 0);
+    }
+
+    void Update () {
+        if (activeEffects.Count == 0) {
+            effectsText.text = "";
+        } else {
+            effectsText.text = "Active effects:\n";
+            foreach (var e in activeEffects) {
+                effectsText.text += e.name + " (" + e.turnsLeft + " turns)  \n";
+            }
+        }
     }
 }

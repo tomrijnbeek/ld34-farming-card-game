@@ -54,6 +54,16 @@ public class TileInfo : Singleton<TileInfo> {
                 (plant.maxProgress - plant.currentProgress) / rate))));
         }
 
+        if (selectedTile.tileEffects != Tile.TileEffects.None) {
+            if (plant != null)
+                builder.AppendLine();
+            
+            foreach (var e in System.Enum.GetValues(typeof(Tile.TileEffects))) {
+                if ((selectedTile.tileEffects & (Tile.TileEffects)e) > 0)
+                    builder.AppendLine(e.ToString());
+            }
+        }
+
         if (selectedTile.influences.Count > 0 && !(plant != null && plant is Mushrooms)) {
             if (plant != null)
                 builder.AppendLine();

@@ -2,13 +2,20 @@
 using System.Collections.Generic;
 
 public class Tile : MonoBehaviourBase {
+    [System.Flags]
+    public enum TileEffects {
+        None = 0,
+        Shadow = 1,
+        Composted = 2,
+    }
 
     public Tile left, right, top, bottom;
     public float growthRate = 1;
     public Plant plant;
+    public TileEffects tileEffects = TileEffects.None;
 
     public List<GrowthRateInfluence> influences = new List<GrowthRateInfluence>();
-    GrowthRateInfluence adjacencyBonus;
+    GrowthRateInfluence adjacencyBonus, compostBonus;
 
     public void DoGrowthStep (float factor = 1, bool ignoreRate = false) {
         BroadcastMessage("GrowthStep", (ignoreRate ? 1 : growthRate) * factor, SendMessageOptions.DontRequireReceiver);
@@ -41,6 +48,17 @@ public class Tile : MonoBehaviourBase {
             if (t.plant != null && t.plant.title == p.title)
                 IncreaseAdjacencyBonus();
         }
+
+        if ((tileEffects & TileEffects.Composted) > 0) {
+            if (compostBonus == null) {
+                AddInfluence(compostBonus = new GrowthRateInfluence() {
+                    description = "Composted",
+                    amount = .5f,
+                });
+            }
+            tileEffects -= TileEffects.Composted;
+        }
+
         UpdateInfoMaybe();
     }
 
@@ -49,9 +67,17 @@ public class Tile : MonoBehaviourBase {
             t.NeighbourPlantFinished(p);
         }
         plant = null;
+
+        // End adjacency bonus
         if (adjacencyBonus != null) {
             EndInfluence(adjacencyBonus);
             adjacencyBonus = null;
+        }
+
+        // End compost bonus
+        if (compostBonus != null) {
+            EndInfluence(compostBonus);
+            compostBonus = null;
         }
     }
 
@@ -61,6 +87,11 @@ public class Tile : MonoBehaviourBase {
 
     public void NeighbourPlantFinished(Plant p) {
         if (plant != null && plant.title == p.title) DecreaseAdjacencyBonus();
+    }
+
+    public void Compost () {
+        tileEffects |= TileEffects.Composted;
+        UpdateInfoMaybe();
     }
 
     void IncreaseAdjacencyBonus() {

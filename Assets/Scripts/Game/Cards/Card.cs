@@ -62,6 +62,7 @@ public class Card : MonoBehaviourBase {
     }
 
     void Finished() {
+        GameManager.Instance.currency -= definition.cost;
         GameManager.Instance.ResetHighlightedTiles();
         Hand.Instance.ResetActiveCard();
         Hand.Instance.DiscardCard(this);

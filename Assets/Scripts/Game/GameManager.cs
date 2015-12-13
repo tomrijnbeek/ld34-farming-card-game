@@ -10,6 +10,8 @@ public class GameManager : Singleton<GameManager> {
 
     public bool growNow;
 
+    public UnityEngine.UI.Text currencyText; 
+
 	// Use this for initialization
 	void Start () {
         tiles = new Tile[5,5];
@@ -44,6 +46,8 @@ public class GameManager : Singleton<GameManager> {
             GrowthStep();
             growNow = false;
         }
+
+        currencyText.text = "$ " + currency;
 	}
 
     public void ResetHighlightedTiles () {

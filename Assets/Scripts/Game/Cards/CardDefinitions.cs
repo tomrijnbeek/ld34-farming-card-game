@@ -32,6 +32,13 @@ public class CardDefinitions : Singleton<CardDefinitions> {
                 go => NeighbourEffect(go, GrowthInfluence("Large plant adjacency", -.5f))
             ),
 
+            Plant<Plant>("Recyclable plant", "Leaves the tile composted after growing", "plant", 11, 2, 6, 1,
+                go => SelfEffect(go, new EffectDefinition() {
+                    Do = tiles => { },
+                    Undo = Compost(),
+                })
+            ),
+
             Plant<Mushrooms>("Mushrooms", "Not affected by growth bonuses, but grows 50% in shadow.", "mushrooms",
                 15, 0, 12, 1),
             #endregion
@@ -43,11 +50,13 @@ public class CardDefinitions : Singleton<CardDefinitions> {
             #endregion
 
             #region Action
+            Action("Compost", "Compost all empty tiles in a 2x2 area", Compost(), 3, 1, 2, 2),
+
             Action("Dirty landry", "Discards entire hand.", t => Hand.Instance.DiscardAll(), 0, 1),
 
             Action("Growing spurt", "Advances all procude one extra step.", GrowthStep(1), 5, 1),
 
-            Action("Temporal anomaly", "Instantly finishes a produce.", GrowthStep(1000), 10, 1),
+            Action("Temporal anomaly", "Instantly finishes a produce.", GrowthStep(1000), 10, 1, 1, 1),
             #endregion
         };
     }
@@ -122,6 +131,11 @@ public class CardDefinitions : Singleton<CardDefinitions> {
         eff.action = action;
     }
 
+    void SelfEffect(GameObject go, EffectDefinition action) {
+        var eff = go.AddComponent<SelfEffect>();
+        eff.action = action;
+    }
+
     EffectDefinition GrowthInfluence(string desc, float amount) {
         var influence = new GrowthRateInfluence() {
             amount = amount,
@@ -135,6 +149,15 @@ public class CardDefinitions : Singleton<CardDefinitions> {
             Undo = tiles => {
                 foreach (var t in tiles)
                     t.EndInfluence(influence);
+            }
+        };
+    }
+
+    Action<Tile[]> Compost() {
+        return tiles => {
+            foreach (var t in tiles) {
+                if (t.plant == null)
+                    t.Compost();
             }
         };
     }
