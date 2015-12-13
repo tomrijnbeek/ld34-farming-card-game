@@ -27,24 +27,24 @@ public class CardDefinitions : Singleton<CardDefinitions> {
 
         cards = new [] {
             #region Produce
-            Plant<Plant>("Basic plant", "", "plant", 18, 0, 4, 10),
+            Plant<Plant>("Basic plant", "", "plant", 12, 0, 4, 10),
 
-            Plant<Plant>("White lily", "Prevents weeds from spawning in adjacent tiles.", "plant", 16, 2, 6, 3,
+            Plant<Plant>("White lily", "Prevents weeds from spawning in adjacent tiles.", "plant", 8, 2, 6, 3,
                 go => NeighbourEffect(go, TileEffect("White lily protection", Tile.TileEffects.WeedProtection))
             ),
 
-            Plant<Plant>("Large plant", "Reduces growth in neighbouring tiles by 50%.", "plant", 10, 0, 8, 5,
+            Plant<Plant>("Large plant", "Reduces growth in neighbouring tiles by 50%.", "plant", 8, 0, 8, 5,
                 go => NeighbourEffect(go, GrowthInfluence("Large plant adjacency", -.5f))
             ),
 
-            Plant<Plant>("Recyclable plant", "Leaves the tile composted after growing", "plant", 15, 2, 6, 3,
+            Plant<Plant>("Recyclable plant", "Leaves the tile composted after growing", "plant", 18, 2, 6, 3,
                 go => SelfEffect(go, new EffectDefinition() {
                     Do = tiles => { },
                     Undo = Compost(),
                 })
             ),
 
-            Plant<TreePlant>("Small tree", "Doesn't disappear when fully grown.\nProvides shadow in adjacent tiles when grown.", "tree", 25, 3, 0, 2,
+            Plant<TreePlant>("Small tree", "Doesn't disappear when fully grown.\nProvides shadow in adjacent tiles when grown.", "tree", 20, 3, 0, 2,
                 go => NeighbourEffect(go, new EffectDefinition() {
                     Do = tiles => { },
                     Undo = tiles => {
@@ -54,7 +54,7 @@ public class CardDefinitions : Singleton<CardDefinitions> {
             ),
 
             Plant<Mushrooms>("Mushrooms", "Not affected by growth bonuses, but grows 50% in shadow.", "mushrooms",
-                15, 0, 10, 3),
+                12, 0, 10, 3),
             #endregion
 
             #region Effect
@@ -213,7 +213,7 @@ public class CardDefinitions : Singleton<CardDefinitions> {
 
     Action<Tile[]> DestroyProduce<T>() where T : Plant {
         return tiles => {
-            foreach (var t in tiles.Where(t1 => t1.plant != null && (t1 is T))) {
+            foreach (var t in tiles.Where(t1 => t1.plant != null && (t1.plant is T))) {
                 t.BroadcastMessage("DoDestroy");
             }
         };
@@ -226,7 +226,7 @@ public class CardDefinitions : Singleton<CardDefinitions> {
         return tiles => tiles.Any(t => t.plant != null && (includeWeeds || !(t.plant is Weeds)));
     }
     Predicate<Tile[]> AllProduceOfType<T>() where T : Plant {
-        return tiles => tiles.All(t => t.plant != null && t is T);
+        return tiles => tiles.All(t => t.plant != null && t.plant is T);
     }
     Predicate<Tile[]> AnyEmpty() {
         return tiles => tiles.Any(t => t.plant == null);

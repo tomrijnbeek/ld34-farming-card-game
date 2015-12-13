@@ -1,8 +1,9 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 using System.Linq;
 
-public class Card : MonoBehaviourBase {
+public class Card : MonoBehaviourBase, IPointerClickHandler {
 
     public CardDefinition definition;
     TileSelector selector;
@@ -47,17 +48,32 @@ public class Card : MonoBehaviourBase {
 	// Update is called once per frame
 	void Update () {
         if (selector) {
-            if (Input.GetMouseButtonDown(0) && selector.validSelection) {
-                definition.Do(selector.selectedTiles().ToArray());
-                Finished();
-            } else if (Input.GetMouseButtonDown(1)) {
-                Cancelled();
+            if (Input.GetMouseButtonDown(0)) {
+                if (selector.validSelection) {
+                    definition.Do(selector.selectedTiles().ToArray());
+                    Finished();
+                } else  {
+                    Cancelled();
+                }
             }
         }
 	}
 
-    public virtual void Activate () {
-        if (!usable || Hand.Instance.cardActive)
+    public virtual void OnPointerClick (PointerEventData args) {
+        if (Hand.Instance.cardActive)
+            return;
+
+        // Right button.
+        if (args.button == PointerEventData.InputButton.Right) {
+            if (GameManager.Instance.currency >= 5) {
+                GameManager.Instance.currency -= 5;
+                Hand.Instance.DiscardCard(this);
+            }
+
+            return;
+        }
+
+        if (!usable)
             return;
 
         Hand.Instance.SetActiveCard(this);

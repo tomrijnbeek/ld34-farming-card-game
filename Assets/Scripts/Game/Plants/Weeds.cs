@@ -22,7 +22,8 @@ public class Weeds : Plant {
             if (tiles.Length > 0) {
                 var newTile = tiles[Random.Range(0, tiles.Length)];
 
-                if ((newTile.tileEffects & Tile.TileEffects.WeedProtection) > 0)
+                if ((newTile.tileEffects & Tile.TileEffects.WeedProtection) > 0
+                    || newTile.GetComponentInChildren<Plant>() != null)
                     return;
 
                 var obj = Instantiate(weedsPrefab);

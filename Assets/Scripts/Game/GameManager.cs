@@ -42,12 +42,32 @@ public class GameManager : Singleton<GameManager> {
 	}
 
     public void GrowthStep() {
+        // Some free moneyz
         currency++;
+
+        // Grow plants
         foreach (var t in this.tiles) {
             t.DoGrowthStep();
         }
+
+        // Process effect durations
         EffectManager.Instance.GrowthStep();
 
+        // Spawn weed every 20 turns or so.
+        if (Random.value < .05) {
+            var eligibleTiles = tiles.Cast<Tile>().Where(t => t.plant == null).ToArray();
+            if (eligibleTiles.Length > 0) {
+                var tile = eligibleTiles[Random.Range(0, eligibleTiles.Length)];
+                if ((tile.tileEffects & Tile.TileEffects.WeedProtection) == 0) {
+                    // Actually spawn.
+                    var weedObj = Instantiate(weedPrefab);
+                    weedObj.transform.parent = tile.transform;
+                    weedObj.transform.localPosition = new Vector3(0, 0, -1);
+                }
+            }
+        }
+
+        // Maybe game over.
         if (Hand.Instance.cards.All(c => !c.usable)) {
             GameOver ();
         }
