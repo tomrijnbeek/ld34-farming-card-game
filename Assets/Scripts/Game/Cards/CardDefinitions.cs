@@ -63,7 +63,7 @@ public class CardDefinitions : Singleton<CardDefinitions> {
             Effect("Sprinkler", "Accelerates growth in 3x3 area by 100%.", 4, GrowthInfluence("Sprinkler", 1), 10, 2, 3, 3),
 
             Effect("Weeds protection", "Protects a 2x2 area from weeds.", 12, TileEffect("Weed protection", Tile.TileEffects.WeedProtection), 15, 3,
-                2, 2, AllProduceOfType<Weeds>()),
+                2, 2),
             #endregion
 
             #region Action
@@ -226,7 +226,7 @@ public class CardDefinitions : Singleton<CardDefinitions> {
         return tiles => tiles.Any(t => t.plant != null && (includeWeeds || !(t.plant is Weeds)));
     }
     Predicate<Tile[]> AllProduceOfType<T>() where T : Plant {
-        return tiles => tiles.All(t => t.plant != null && t.plant is T);
+        return tiles => tiles.All(t => t.plant != null && t.plant.GetType() == typeof(T));
     }
     Predicate<Tile[]> AnyEmpty() {
         return tiles => tiles.Any(t => t.plant == null);

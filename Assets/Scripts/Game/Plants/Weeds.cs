@@ -3,7 +3,6 @@ using System.Linq;
 
 public class Weeds : Plant {
 
-    public GameObject weedsPrefab;
     GrowthRateInfluence weedsInfluence;
 
     protected override void ApplyGrowth(float growthRate)
@@ -26,7 +25,7 @@ public class Weeds : Plant {
                     || newTile.GetComponentInChildren<Plant>() != null)
                     return;
 
-                var obj = Instantiate(weedsPrefab);
+                var obj = Instantiate(GameManager.Instance.weedPrefab);
                 obj.transform.parent = newTile.transform;
                 obj.transform.localPosition = new Vector3(0, 0, -1);
             }
@@ -55,5 +54,7 @@ public class Weeds : Plant {
 
         foreach (var t in tile.AdjacentTiles())
             t.EndInfluence(weedsInfluence);
+
+        Destroy(gameObject);
     }
 }

@@ -65,10 +65,11 @@ public class Card : MonoBehaviourBase, IPointerClickHandler {
 
         // Right button.
         if (args.button == PointerEventData.InputButton.Right) {
-            if (GameManager.Instance.currency >= 5) {
-                GameManager.Instance.currency -= 5;
-                Hand.Instance.DiscardCard(this);
-            }
+//            if (GameManager.Instance.currency >= 5) {
+//                GameManager.Instance.currency -= 5;
+            Hand.Instance.DiscardCard(this);
+            GameManager.Instance.GrowthStep();
+//            }
 
             return;
         }

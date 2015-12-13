@@ -11,6 +11,7 @@ public class GameManager : Singleton<GameManager> {
     public int currency;
 
     public bool growNow;
+    public bool gameOver;
 
     public UnityEngine.UI.Text currencyText; 
 
@@ -66,11 +67,6 @@ public class GameManager : Singleton<GameManager> {
                 }
             }
         }
-
-        // Maybe game over.
-        if (Hand.Instance.cards.All(c => !c.usable)) {
-            GameOver ();
-        }
     }
 	
 	// Update is called once per frame
@@ -83,12 +79,22 @@ public class GameManager : Singleton<GameManager> {
         currencyText.text = "$ " + currency;
 	}
 
+    void LateUpdate () {
+        // Maybe game over.
+        if (Hand.Instance.cards.All(c => !c.usable)) {
+            GameOver ();
+        }
+    }
+
     public void ResetHighlightedTiles () {
         foreach (var t in tiles)
             t.Highlight(Tile.Selection.None);
     }
 
     void GameOver () {
-        Debug.Log("Game over");
+        if (!gameOver) {
+            Debug.Log("Game over");
+            gameOver = true;
+        }
     }
 }
