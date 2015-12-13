@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 using System.Collections;
 using System.Linq;
 
@@ -18,6 +19,7 @@ public class GameManager : Singleton<GameManager> {
 	// Use this for initialization
 	void Start () {
         tiles = new Tile[5,5];
+        currency = 0;
 
         for (int j = 0; j < 5; j++)
             for (int i = 0; i < 5; i++) {
@@ -93,8 +95,8 @@ public class GameManager : Singleton<GameManager> {
 
     void GameOver () {
         if (!gameOver) {
-            Debug.Log("Game over");
             gameOver = true;
+            SceneManager.LoadScene("GameOver");
         }
     }
 }

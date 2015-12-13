@@ -3,12 +3,15 @@ using System.Collections.Generic;
 
 public class Hand : Singleton<Hand> {
     
-    public List<Card> cards = new List<Card>();
+    public List<Card> cards;
 
     public bool cardActive;
 
 	// Use this for initialization
 	void Start () {
+        cards = new List<Card>();
+        cardActive = false;
+
         // Two random cards, at least three usable cards.
         InitializeCard(Deck.Instance.GetRandomCard());
         InitializeCard(Deck.Instance.GetRandomCard());

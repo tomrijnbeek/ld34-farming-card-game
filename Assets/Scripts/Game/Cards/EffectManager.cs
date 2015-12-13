@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 public class EffectManager : Singleton<EffectManager> {
 
-    public List<Effect> activeEffects = new List<Effect>();
+    public List<Effect> activeEffects;
     public UnityEngine.UI.Text effectsText;
 
     public void AddEffect(Effect e) {
@@ -20,6 +20,10 @@ public class EffectManager : Singleton<EffectManager> {
         }
 
         activeEffects.RemoveAll(e => e.turnsLeft <= 0);
+    }
+
+    void Start() {
+        activeEffects = new List<Effect>();
     }
 
     void Update () {
